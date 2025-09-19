@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thermochemistry Energy Challenge</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .game-setup {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .teams-container {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .team-card {
+            flex: 1;
+            background: linear-gradient(135deg, #4299e1, #3182ce);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(66, 153, 225, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .team-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .team-card.team2 {
+            background: linear-gradient(135deg, #ed64a6, #d53f8c);
+            box-shadow: 0 10px 25px rgba(237, 100, 166, 0.3);
+        }
+
+        .energy-display {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 10px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .current-turn {
+            border: 3px solid #ffd700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .game-area {
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .challenge-card {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 25px rgba(72, 187, 120, 0.3);
+        }
+
+        .challenge-type {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .question {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .timer {
+            background: #e53e3e;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(229, 62, 62, 0.3);
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4299e1, #3182ce);
+            color: white;
+            box-shadow: 0 5px 15px rgba(66, 153, 225, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            box-shadow: 0 5px 15px rgba(72, 187, 120, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e53e3e, #c53030);
+            color: white;
+            box-shadow: 0 5px 15px rgba(229, 62, 62, 0.4);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .level-selector {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .level-btn {
+            padding: 10px 20px;
+            background: #cbd5e0;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .level-btn.active {
+            background: linear-gradient(135deg, #805ad5, #6b46c1);
+            color: white;
+        }
+
+        .bonus-card {
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            color: #333;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 20px 0;
+            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.3);
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { box-shadow: 0 10px 25px rgba(255, 215, 0, 0.3); }
+            to { box-shadow: 0 10px 35px rgba(255, 215, 0, 0.6); }
+        }
+
+        .game-log {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        .log-entry {
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .winner-announcement {
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            color: #333;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            animation: celebration 1s infinite alternate;
+        }
+
+        @keyframes celebration {
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .teams-container {
+                flex-direction: column;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            button {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔥 Thermochemistry Energy Challenge 🔥</h1>
+        
+        <div class="game-setup">
+            <div class="teams-container">
+                <div class="team-card" id="team1Card">
+                    <h3>Tim 1</h3>
+                    <div class="energy-display" id="team1Energy">100 kJ</div>
+                    <div>Energi Saat Ini</div>
+                </div>
+                <div class="team-card team2" id="team2Card">
+                    <h3>Tim 2</h3>
+                    <div class="energy-display" id="team2Energy">100 kJ</div>
+                    <div>Energi Saat Ini</div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h3>Giliran: <span id="currentTurnDisplay">Tim 1</span></h3>
+                <div>Ronde: <span id="roundDisplay">1</span> / 7</div>
+            </div>
+        </div>
+
+        <div class="game-area">
+            <div id="gameStart">
+                <div style="text-align: center;">
+                    <h2>Selamat datang di Thermochemistry Energy Challenge!</h2>
+                    <p>Setiap tim dimulai dengan energi 100 kJ. Mari mulai permainan!</p>
+                    <button class="btn-primary" onclick="startGame()">Mulai Permainan</button>
+                </div>
+            </div>
+
+            <div id="gamePlay" class="hidden">
+                <div class="level-selector">
+                    <button class="level-btn active" onclick="selectLevel(1)">Level 1 (+20/-15 kJ)</button>
+                    <button class="level-btn" onclick="selectLevel(2)">Level 2 (+25/-20 kJ)</button>
+                    <button class="level-btn" onclick="selectLevel(3)">Level 3 (+30/-25 kJ)</button>
+                </div>
+
+                <div class="challenge-card" id="challengeCard">
+                    <div class="challenge-type" id="challengeType">Perhitungan Cepat</div>
+                    <div class="question" id="questionText"></div>
+                </div>
+
+                <div class="timer" id="timer">Waktu: 90 detik</div>
+
+                <div class="controls">
+                    <button class="btn-success" onclick="answerCorrect()">Jawaban Benar ✓</button>
+                    <button class="btn-danger" onclick="answerWrong()">Jawaban Salah ✗</button>
+                    <button class="btn-primary" onclick="skipQuestion()">Tidak Bisa Jawab</button>
+                </div>
+
+                <div class="controls">
+                    <button class="btn-primary" onclick="drawNewCard()">Ambil Kartu Baru</button>
+                </div>
+            </div>
+
+            <div id="bonusCard" class="bonus-card hidden">
+                <h3>🎁 Kartu Energi Bonus!</h3>
+                <div id="bonusText"></div>
+                <button class="btn-primary" onclick="applyBonus()">Terima Bonus</button>
+            </div>
+
+            <div id="stealEnergyMode" class="hidden">
+                <div style="background: #fbb6ce; padding: 20px; border-radius: 15px; text-align: center;">
+                    <h3>⚡ Mode Mencuri Energi!</h3>
+                    <p>Tim lawan bisa mencoba menjawab untuk mendapat +10 kJ</p>
+                    <div class="controls">
+                        <button class="btn-success" onclick="stealSuccess()">Tim Lawan Benar</button>
+                        <button class="btn-danger" onclick="stealFail()">Tim Lawan Salah</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="game-log">
+            <h4>Log Permainan:</h4>
+            <div id="logContainer"></div>
+        </div>
+
+        <div id="gameEnd" class="winner-announcement hidden">
+            <h2>🏆 Master of Thermochemistry! 🏆</h2>
+            <div id="winnerText"></div>
+            <button class="btn-primary" onclick="resetGame()" style="margin-top: 20px;">Main Lagi</button>
+        </div>
+    </div>
+
+    <script>
+        // Game state
+        let gameState = {
+            team1Energy: 100,
+            team2Energy: 100,
+            currentTurn: 1, // 1 for Team 1, 2 for Team 2
+            round: 1,
+            selectedLevel: 1,
+            timer: null,
+            timeLeft: 90,
+            awaitingBonus: false,
+            stealMode: false
+        };
+
+        // Question database
+        const questions = {
+            1: [
+                {
+                    type: "Analisis Konseptual",
+                    question: "Apakah reaksi fotosintesis (6CO₂ + 6H₂O → C₆H₁₂O₆ + 6O₂) termasuk reaksi endoterm atau eksoterm? Jelaskan!",
+                    answer: "Endoterm, karena memerlukan energi cahaya matahari untuk berlangsung (ΔH > 0)"
+                },
+                {
+                    type: "Perhitungan Cepat", 
+                    question: "Jika ΔH pembakaran metana = -890 kJ/mol, berapa energi yang dilepas saat membakar 2 mol CH₄?",
+                    answer: "2 × (-890) = -1780 kJ"
+                },
+                {
+                    type: "Analisis Konseptual",
+                    question: "Mengapa es batu terasa dingin saat meleleh di mulut? Jelaskan dalam konsep termokimia!",
+                    answer: "Proses peleburan es adalah endoterm, menyerap kalor dari mulut sehingga mulut terasa dingin"
+                },
+                {
+                    type: "Perhitungan Cepat",
+                    question: "Diketahui ΔH pembentukan H₂O(l) = -286 kJ/mol. Hitung ΔH untuk reaksi: 2H₂ + O₂ → 2H₂O",
+                    answer: "ΔH = 2 × (-286) = -572 kJ"
+                },
+                {
+                    type: "Analisis Konseptual",
+                    question: "Manakah yang lebih eksoterm: pembakaran kayu atau pembakaran gas LPG? Mengapa?",
+                    answer: "Gas LPG lebih eksoterm karena memiliki ikatan C-H dan C-C yang lebih banyak per gram"
+                },
+                {
+                    type: "Perhitungan Cepat",
+                    question: "Jika kalor jenis air = 4,2 J/g°C, berapa kalor yang diperlukan untuk memanaskan 500g air dari 25°C ke 75°C?",
+                    answer: "Q = m × c × ΔT = 500 × 4,2 × 50 = 105.000 J = 105 kJ"
+                },
+                {
+                    type: "Analisis Konseptual",
+                    question: "Mengapa kompres dingin menggunakan NH₄NO₃ (amonium nitrat)? Jelaskan prinsipnya!",
+                    answer: "Pelarutan NH₄NO₃ dalam air adalah proses endoterm, menyerap kalor sehingga suhu turun"
+                },
+                {
+                    type: "Perhitungan Cepat",
+                    question: "Diketahui ΔH sublimasi iod = +62 kJ/mol. Berapa energi yang diperlukan untuk menyublimkan 25,4 g I₂?",
+                    answer: "n = 25,4/254 = 0,1 mol; E = 0,1 × 62 = 6,2 kJ"
+                }
+            ],
+            2: [
+                {
+                    type: "Perhitungan Cepat",
+                    question: "Hitung ΔH reaksi: C₂H₄ + H₂ → C₂H₆. Diketahui: ΔHf C₂H₄ = +52 kJ/mol, ΔHf C₂H₆ = -85 kJ/mol"
+                },
+                {
+                    type: "Analisis Konseptual", 
+                    question: "Buatlah diagram energi untuk reaksi eksoterm A + B → C + D. Tunjukkan energi aktivasi dan ΔH!"
+                },
+                {
+                    type: "Perhitungan Cepat",
+                    question: "Menggunakan Hukum Hess, hitung ΔH untuk C(s) → C(g) jika: C(s) + O₂(g) → CO₂(g) ΔH = -394 kJ dan C(g) + O₂(g) → CO₂(g) ΔH = -1110 kJ"
+                },
+                {
+                    type: "Analisis Konseptual",
+                    question: "Jelaskan mengapa kalorimeter bom digunakan untuk mengukur kalor pembakaran, bukan kalorimeter sederhana!"
+                }
+            ],
+            3: [
+                {
+                    type: "Aplikasi",
+                    question: "Mengapa bensin (oktan) lebih efisien sebagai bahan bakar daripada etanol berdasarkan energi ikatan? Hitung dan bandingkan!"
+                },
+                {
+                    type: "Aplikasi",
+                    question: "Dalam industri, mengapa proses Haber (sintesis NH₃) dilakukan pada suhu tinggi padahal reaksinya eksoterm? Jelaskan dilema energi vs kinetika!"
+                },
+                {
+                    type: "Perhitungan Cepat",
+                    question: "Hitung energi ikatan rata-rata C-H jika ΔH atomisasi CH₄ = +1656 kJ/mol dan ΔHf CH₄ = -75 kJ/mol"
+                },
+                {
+                    type: "Aplikasi",
+                    question: "Desain sistem pendingin yang memanfaatkan proses endoterm. Pilih senyawa kimia dan jelaskan prinsip kerjanya!"
+                }
+            ]
+        };
+
+        // Bonus cards
+        const bonusCards = [
+            { text: "🔥 Reaksi Eksoterm Hebat: Tambah +30 kJ!", value: 30 },
+            { text: "🌡️ Kehilangan Panas ke Lingkungan: Kurang -20 kJ", value: -20 },
+            { text: "📚 Hukum Hess Membantumu: Ambil lagi 1 kartu & energi dobel!", value: "double" },
+            { text: "⚡ Katalisator Ajaib: Energi bonus +25 kJ!", value: 25 },
+            { text: "❄️ Reaksi Endoterm: Kehilangan -15 kJ", value: -15 },
+            { text: "🎯 Efisiensi Sempurna: Gandakan energi dari jawaban terakhir!", value: "efficiency" }
+        ];
+
+        function startGame() {
+            document.getElementById('gameStart').classList.add('hidden');
+            document.getElementById('gamePlay').classList.remove('hidden');
+            updateDisplay();
+            drawNewCard();
+            startTimer();
+        }
+
+        function selectLevel(level) {
+            gameState.selectedLevel = level;
+            document.querySelectorAll('.level-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            addLog(`Level ${level} dipilih`);
+        }
+
+        function drawNewCard() {
+            const levelQuestions = questions[gameState.selectedLevel];
+            const randomQuestion = levelQuestions[Math.floor(Math.random() * levelQuestions.length)];
+            
+            document.getElementById('challengeType').textContent = randomQuestion.type;
+            document.getElementById('questionText').textContent = randomQuestion.question;
+            
+            // Reset timer
+            gameState.timeLeft = 90;
+            startTimer();
+            
+            addLog(`Tim ${gameState.currentTurn} mengambil kartu tantangan Level ${gameState.selectedLevel}`);
+        }
+
+        function startTimer() {
+            clearInterval(gameState.timer);
+            gameState.timer = setInterval(() => {
+                gameState.timeLeft--;
+                document.getElementById('timer').textContent = `Waktu: ${gameState.timeLeft} detik`;
+                
+                if (gameState.timeLeft <= 0) {
+                    clearInterval(gameState.timer);
+                    timeUp();
+                }
+            }, 1000);
+        }
+
+        function timeUp() {
+            const currentTeam = gameState.currentTurn;
+            if (currentTeam === 1) {
+                gameState.team1Energy -= 10;
+            } else {
+                gameState.team2Energy -= 10;
+            }
+            
+            addLog(`⏰ Waktu habis! Tim ${currentTeam} kehilangan 10 kJ`);
+            updateDisplay();
+            nextTurn();
+        }
+
+        function answerCorrect() {
+            clearInterval(gameState.timer);
+            const energyGain = getEnergyReward();
+            
+            if (gameState.currentTurn === 1) {
+                gameState.team1Energy += energyGain;
+            } else {
+                gameState.team2Energy += energyGain;
+            }
+            
+            addLog(`✅ Tim ${gameState.currentTurn} menjawab benar! +${energyGain} kJ`);
+            updateDisplay();
+            
+            // Show bonus card opportunity
+            showBonusCard();
+        }
+
+        function answerWrong() {
+            clearInterval(gameState.timer);
+            const energyLoss = getEnergyPenalty();
+            
+            if (gameState.currentTurn === 1) {
+                gameState.team1Energy -= energyLoss;
+            } else {
+                gameState.team2Energy -= energyLoss;
+            }
+            
+            addLog(`❌ Tim ${gameState.currentTurn} menjawab salah! -${energyLoss} kJ`);
+            updateDisplay();
+            nextTurn();
+        }
+
+        function skipQuestion() {
+            clearInterval(gameState.timer);
+            addLog(`⏭️ Tim ${gameState.currentTurn} tidak bisa menjawab. Mode mencuri energi aktif!`);
+            showStealMode();
+        }
+
+        function showStealMode() {
+            document.getElementById('stealEnergyMode').classList.remove('hidden');
+            gameState.stealMode = true;
+        }
+
+        function stealSuccess() {
+            const oppositeTeam = gameState.currentTurn === 1 ? 2 : 1;
+            
+            if (oppositeTeam === 1) {
+                gameState.team1Energy += 10;
+            } else {
+                gameState.team2Energy += 10;
+            }
+            
+            addLog(`⚡ Tim ${oppositeTeam} berhasil mencuri energi! +10 kJ`);
+            updateDisplay();
+            hideStealMode();
+            nextTurn();
+        }
+
+        function stealFail() {
+            const oppositeTeam = gameState.currentTurn === 1 ? 2 : 1;
+            addLog(`❌ Tim ${oppositeTeam} gagal mencuri energi`);
+            hideStealMode();
+            nextTurn();
+        }
+
+        function hideStealMode() {
+            document.getElementById('stealEnergyMode').classList.add('hidden');
+            gameState.stealMode = false;
+        }
+
+        function showBonusCard() {
+            const randomBonus = bonusCards[Math.floor(Math.random() * bonusCards.length)];
+            document.getElementById('bonusText').textContent = randomBonus.text;
+            document.getElementById('bonusCard').classList.remove('hidden');
+            document.getElementById('bonusCard').dataset.bonusValue = randomBonus.value;
+            gameState.awaitingBonus = true;
+        }
+
+        function applyBonus() {
+            const bonusValue = document.getElementById('bonusCard').dataset.bonusValue;
+            
+            if (bonusValue === "double") {
+                addLog(`🎁 Bonus: Hukum Hess! Ambil kartu lagi dengan energi dobel`);
+                // Implement double energy logic here
+            } else if (bonusValue === "efficiency") {
+                addLog(`🎁 Bonus: Efisiensi sempurna! Energi terakhir digandakan`);
+                // Implement efficiency bonus here
+            } else {
+                const bonus = parseInt(bonusValue);
+                if (gameState.currentTurn === 1) {
+                    gameState.team1Energy += bonus;
+                } else {
+                    gameState.team2Energy += bonus;
+                }
+                addLog(`🎁 Bonus diterapkan: ${bonus > 0 ? '+' : ''}${bonus} kJ untuk Tim ${gameState.currentTurn}`);
+            }
+            
+            document.getElementById('bonusCard').classList.add('hidden');
+            gameState.awaitingBonus = false;
+            updateDisplay();
+            nextTurn();
+        }
+
+        function getEnergyReward() {
+            switch(gameState.selectedLevel) {
+                case 1: return 20;
+                case 2: return 25;
+                case 3: return 30;
+                default: return 20;
+            }
+        }
+
+        function getEnergyPenalty() {
+            switch(gameState.selectedLevel) {
+                case 1: return 15;
+                case 2: return 20;
+                case 3: return 25;
+                default: return 15;
+            }
+        }
+
+        function nextTurn() {
+            gameState.currentTurn = gameState.currentTurn === 1 ? 2 : 1;
+            
+            if (gameState.currentTurn === 1) {
+                gameState.round++;
+            }
+            
+            updateDisplay();
+            
+            if (gameState.round > 7) {
+                endGame();
+                return;
+            }
+            
+            // Auto draw new card for next turn
+            setTimeout(() => {
+                drawNewCard();
+            }, 2000);
+        }
+
+        function updateDisplay() {
+            document.getElementById('team1Energy').textContent = `${gameState.team1Energy} kJ`;
+            document.getElementById('team2Energy').textContent = `${gameState.team2Energy} kJ`;
+            document.getElementById('currentTurnDisplay').textContent = `Tim ${gameState.currentTurn}`;
+            document.getElementById('roundDisplay').textContent = gameState.round;
+            
+            // Update current turn highlighting
+            document.getElementById('team1Card').classList.toggle('current-turn', gameState.currentTurn === 1);
+            document.getElementById('team2Card').classList.toggle('current-turn', gameState.currentTurn === 2);
+        }
+
+        function addLog(message) {
+            const logContainer = document.getElementById('logContainer');
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.textContent = `Ronde ${gameState.round}: ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        function endGame() {
+            clearInterval(gameState.timer);
+            document.getElementById('gamePlay').classList.add('hidden');
+            document.getElementById('gameEnd').classList.remove('hidden');
+            
+            let winner;
+            let winnerEnergy;
+            
+            if (gameState.team1Energy > gameState.team2Energy) {
+                winner = "Tim 1";
+                winnerEnergy = gameState.team1Energy;
+            } else if (gameState.team2Energy > gameState.team1Energy) {
+                winner = "Tim 2";
+                winnerEnergy = gameState.team2Energy;
+            } else {
+                winner = "Seri";
+                winnerEnergy = gameState.team1Energy;
+            }
+            
+            if (winner === "Seri") {
+                document.getElementById('winnerText').innerHTML = `
+                    <p>Permainan berakhir seri!</p>
+                    <p>Kedua tim memiliki ${winnerEnergy} kJ</p>
+                    <p>Kalian berdua adalah Master of Thermochemistry! 🎉</p>
+                `;
+            } else {
+                document.getElementById('winnerText').innerHTML = `
+                    <p>${winner} memenangkan permainan!</p>
+                    <p>Energi Akhir: ${winnerEnergy} kJ</p>
+                    <p>${winner} adalah Master of Thermochemistry! 🎉</p>
+                `;
+            }
+        }
+
+        function resetGame() {
+            gameState = {
+                team1Energy: 100,
+                team2Energy: 100,
+                currentTurn: 1,
+                round: 1,
+                selectedLevel: 1,
+                timer: null,
+                timeLeft: 90,
+                awaitingBonus: false,
+                stealMode: false
+            };
+            
+            document.getElementById('gameEnd').classList.add('hidden');
+            document.getElementById('gameStart').classList.remove('hidden');
+            document.getElementById('gamePlay').classList.add('hidden');
+            document.getElementById('bonusCard').classList.add('hidden');
+            document.getElementById('stealEnergyMode').classList.add('hidden');
+            document.getElementById('logContainer').innerHTML = '';
+            
+            // Reset level selection
+            document.querySelectorAll('.level-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.level-btn').classList.add('active');
+            
+            updateDisplay();
+        }
+    </script>
+</body>
+</html>
